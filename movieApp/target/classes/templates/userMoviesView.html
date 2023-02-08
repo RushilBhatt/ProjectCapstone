@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Movie List</title>
+  <style>
+  .movie-div {
+    width: 300px;
+  height: 400px;
+  float: left;
+  margin: 10px;
+}
+
+.movie-div img {
+  width: 100%;
+  height: 60%;
+  object-fit: cover;
+}
+
+.movie-div h3 {
+  margin-top: 20px;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.movie-div p {
+  margin: 20px;
+  font-size: 1.2rem;
+  text-align: justify;
+}
+  </style>
+</head>
+<body>
+<h1>Movie List</h1>
+
+
+
+
+
+<div class="container mx-auto mt-4">
+  <div id="movieMain" class="row">
+    <div th:each="movie :${movies}" class="col-md-4">
+      <div class="card" style="width: 18rem;">
+        <img th:src="${movie.poster}" class="card-img-top" alt="..." />
+        <div class="card-body">
+          <h5 class="card-title" th:text="${movie.title}"></h5>
+          <h6 class="card-subtitle mb-2 text-muted" th:text="${movie.genres}">Card subtitle</h6>
+          <!--                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
+          <!-- movieInfo corresponds to html file          -->
+          <a th:href="@{/movieinfo(id=${movie.movie_Id})}"  class="btn mr-2"><i class="fas fa-link"></i>More Detail</a>
+
+          <!--                    <a href="#" class="btn "><i class="fab fa-github"></i> Github</a>-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  document.addEventListener("DOMContentLoaded", function() {
+    var movies = /*[[${movies}]]*/ [];
+    var poster;
+    const IMG_PATH = 'https://image.tmdb.org/t/p/w300';
+    const movieMain = document.getElementById('movieMain');
+
+    movieMain.innerHTML = '';
+    movies.forEach((movie) => {
+      console.log(movie);
+      let url = `https://api.themoviedb.org/3/movie/${movie.tmdb_Id}?api_key=3fd2be6f0c70a2a598f084ddfb75487c&language=en-US`;
+      console.log('JavaScript is running');
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+          const movieCard = document.createElement('div');
+
+          if (movie.poster != null) {
+            poster = movie.poster;
+          } else if (data.poster_path == null) {
+            poster = 'https://bookstore.ams.org/images/not_found.png';
+          } else {
+            poster = IMG_PATH + data.poster_path;
+            vote = data.vote_average;
+          }
+          console.log(poster);
+          movieCard.classList.add('col');
+          movieCard.innerHTML = `
+                    <div class="card" style="width: 18rem;">
+                        <a href="/movieinfo?id=${movie.movie_Id}">
+                          <div id="movieCard">
+                            <img src="${poster}" class="card-img-top" alt="alt" />
+                          </div>
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${movie.title}"></h5>
+                            <a href="/movieinfo?id=${movie.movie_Id}" class="btn mr-2"><i class="fas fa-link"></i>More Detail</a>
+                            <a href="#" class="mr-2" id="vote"><i class="fab fa-github">${vote}</i></a>
+                        </div>
+                    </div>`;
+          movieMain.appendChild(movieCard);
+        });
+    });
+  });
+</script>
+
+
+</body>
+</html>
+
+<!--
+  <div th:each="movie : ${movies}" class="movie-div">
+    <img th:src="@{'https://image.tmdb.org/t/p/w500/' + ${movie.posterPath}}"/>
+    <h3 th:text="${movie.movieId}"></h3>
+    <h3 th:text="${movie.title}"></h3>
+    <p th:text="${movie.genres}"></p>
+
+  </div>
+<a class="nav-link" href="/favoriteButton" style="color: blue;">Add Movie</a>
+</body>
+</html>
+-->
