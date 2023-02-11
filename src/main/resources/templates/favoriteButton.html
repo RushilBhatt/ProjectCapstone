@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Add Movie to Favorites</title>
+</head>
+<body>
+<h2>Add Movie to Favorites</h2>
+<div class="container">
+  <form th:action="@{/user/add-favorite}" th:object="${movie}" method="post">
+    Movie ID: <input type="number" th:field="*{movieId}" required placeholder="Enter movie ID"><br><br>
+    <input type="submit" value="Add To Favorites">
+  </form>
+</div>
+</body>
+</html>
