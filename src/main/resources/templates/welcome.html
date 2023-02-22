@@ -13,7 +13,7 @@
     <style>
     body {
     text-align:center;
-    font-family: 'Montserrat';
+    background-color: lightgreen;
    }
 
   .container {
@@ -22,34 +22,42 @@
     justify-content: center;
     height: 70vh;
 }
+
+ .effect:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  color: white;
+}
     </style>
 </head>
 <body>
 <!-- Nav Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <a class="navbar-brand" href="">Movie App</a>
+            <a class="navbar-brand" href="#"><i>Movie App</i></a>
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"></li>
-                <a class="nav-link" href="">Welcome, <span th:text="${user.username}"></span></a>
-                <li class="nav-item"></li>
-                <a class="nav-link" href="/changePasswordPageUser">Change Password</a>
-                <li class="nav-item"></li>
-                <a class="nav-link" href="/login">Sign Out</a>
+                <li class="nav-item">
+                    <a class="nav-link" style="color: #0d6efd;">User<span th:text="${session.username}"></span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="effect nav-link" href="/viewfavs" style="color: #0d6efd;">Favourites</a>
+                </li>
+                <a class="effect nav-link" href="/user" style="color: #0d6efd;">Sign Out</a>
             </ul>
         </div>
     </div>
 </nav>
+
 <div class="container d-flex justify-content-center;">
     <div class="row">
         <div class="col-md-12 text-center">
             <p>Welcome to our movie website, where you can find a wide variety of movies  .</p>
             <p>Our website is easy to navigate and you can find what you're looking for quickly and easily.</p>
             <p>Check out our movies by clicking the button below.</p>
+            <!-- button upon click redirect user to userMoviesView page -->
             <a href="/home" class="btn btn-primary float-right">View Movies</a>
         </div>
     </div>

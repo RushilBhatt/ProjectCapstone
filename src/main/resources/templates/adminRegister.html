@@ -55,11 +55,28 @@
 <div class="container">
     <form th:action = "@{/AdminRegistration}" th:object = ${admin} method = "post">
         Username: <input type = "text" th:field = *{username} required><br><br>
-        Password: <input type = "password" th:field = *{password} required><br><br>
-        Confirm Password: <input type = "password" th:field = *{confirmPassword} required>
+        Password: <input id ="pass" type = "password" th:field = *{password} required><br><br>
+        Confirm Password: <input id="pass2" type = "password" th:field = *{confirmPassword} required>
         <input type="submit" value="Register">
     </form>
 </div>
 <a href="/registerUser" class="btn btn-primary">Register as user</a>
+<script>
+    var password = document.getElementById("pass") // call input id password
+  , confirm_password = document.getElementById("pass2"); // call input id password2
+
+<!--Function to Validate the password-->
+    function validatePassword(){
+    //check if value is not the same
+      if(password.value != confirm_password.value) {
+        confirm_password.setCustomValidity("Passwords Don't Match"); //message if true
+      } else {
+        confirm_password.setCustomValidity('');
+      }
+    }
+
+    password.onchange = validatePassword;
+    confirm_password.onkeyup = validatePassword;
+</script>
 </body>
 </html>

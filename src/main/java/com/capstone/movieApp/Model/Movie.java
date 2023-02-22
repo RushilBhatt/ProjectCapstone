@@ -19,7 +19,7 @@ import java.util.List;
 public class Movie {
 
     @Id
-    private int movie_Id;
+    private int movieId;
 
    // @OneToMany(mappedBy = "movie")
    // private List<Rating> ratings;
@@ -36,8 +36,8 @@ public class Movie {
 
   //  @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   //  private List<Favourite> favorites;
-    @Nullable
-   private Integer tmdb_Id;
+
+   private int tmdb_Id;
 
 
 }

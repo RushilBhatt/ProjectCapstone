@@ -2,7 +2,9 @@
 package com.capstone.movieApp.Controller;
 
 import com.capstone.movieApp.Model.User;
+import com.capstone.movieApp.Repository.UserRepository;
 import com.capstone.movieApp.Service.UserLoginService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,12 @@ public class UserLoginController {
     @Autowired(required = true)
     private UserLoginService userService;
 
+    @Autowired
+    private HttpSession session;
+
+    @Autowired
+    private UserRepository userRepo;
+
     private User userData;
 
 
@@ -28,31 +36,22 @@ public class UserLoginController {
         model.addAttribute("user", user);
         return "userLogin";
     }
-
-    // method without model attribute (original login )
-     @PostMapping("/userLogin")
-    public String validateLogin(@ModelAttribute("user") User user) {
-        userData = user;
-        return userService.validateUser(user);
-    }
-
-
-
-
-    /*
+    //method invoked upon login form submission
+    //if returned value by validateUser is "welcome", set session for username & id
     @PostMapping("/userLogin")
-    public String validateLogin(@ModelAttribute("user") User user, Model model, HttpSession session) {
-        String currentUser = userService.validateUser(user);
-        if (currentUser != null) {
-            session.setAttribute("userData", currentUser);
-            model.addAttribute("userData", currentUser);
-            return "redirect:/favoriteButton";
+    public String validateLogin(@ModelAttribute("user") User user, HttpServletRequest request) {
+        String result = userService.validateUser(user, request);
+        if (result.equals("welcome")) {
+            User userdata = userRepo.findByUsername(user.getUsername()).get();
+            request.getSession().setAttribute("username", userdata.getUsername());
+            request.getSession().setAttribute("userid", userdata.getUserid());
         }
-        return "userLogin";
+        return result;
+
     }
-   */
-
-
-
 }
+
+
+
+
 

@@ -14,81 +14,155 @@
       background-color: lightgreen;
     }
     .card {
-      background-color: blue;
+      background-color: #AFEEEE;
     }
+
+  .effect:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+  .btn {
+    background: #3498db;
+    background-image: -webkit-linear-gradient(top, #11CDD4, #11999e);
+    background-image: -moz-linear-gradient(top, #11CDD4, #11999e);
+    background-image: -ms-linear-gradient(top, #11CDD4, #11999e);
+    background-image: -o-linear-gradient(top, #11CDD4, #11999e);
+    background-image: linear-gradient(to bottom, #11CDD4, #11999e);
+    -webkit-border-radius: 3;
+    -moz-border-radius: 3;
+    border-radius: 3px;
+    font-family: 'Montserrat', sans-serif  ;
+    color: #ffffff;
+    font-size: 15px;
+    padding: 5px 10px 5px 10px;
+    text-decoration: none;
+  }
+
+
   </style>
 </head>
 <body>
 
+<!-- Nav Bar -->
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <a class="navbar-brand" href="#"><i>Movie App</i></a>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" style="color: #0d6efd;">User<span th:text="${session.username}"></span></a>
+        </li>
+        <li class="nav-item">
+          <a class="effect nav-link" href="/viewfavs" style="color: #0d6efd;">Favourites</a>
+        </li>
+        <a class="effect nav-link" href="/user" style="color: #0d6efd;">Sign Out</a>
+      </ul>
+    </div>
+  </div>
+</nav>
+
 <<div class="container mx-auto mt-4">
   <div id="movieMain" class="row">
-    <div th:each="movie : ${movies}" class=" col-md-4">
+    <div th:each="movie : ${dataList}" class=" col-md-4">
       <div class="card" style="width: 18rem;">
         <img th:src="${movie.poster}" class="card-img-top" alt="..." />
         <div class="card-body">
           <h5 class="card-title" th:text="${movie.title}"></h5>
           <h6 class="card-subtitle mb-2 text-muted" th:text="${movie.genres}">Card subtitle</h6>
-          <a th:href="@{/findbyid/__${movie.movie_Id}__}" class="btn mr-2"><i class="fas fa-link"></i>More Detail</a>
+          <a th:href="@{/redirectToFindMovieById(id=${movie.movieId})}" class="btn mr-2"><i class="fas fa-link"></i>More Detail</a>
         </div>
       </div>
     </div>
   </div>
+  <ul id="pagination" class="pagination justify-content-center"></ul>
 </div>
-
-
-
-
 
 <script th:inline="javascript">
   document.addEventListener("DOMContentLoaded", function() {
-    var movies = /*[[${movies}]]*/ [];
+    var movies = /*[[${dataList}]]*/ [];
     var poster;
     const IMG_PATH = 'https://image.tmdb.org/t/p/w300';
     const movieMain = document.getElementById('movieMain');
+    const moviesPerPage = 500; // Number of movies to display per page
+    let currentPage = 1; // Default page to display
 
-    movieMain.innerHTML = '';
-    movies.forEach((movie) => {
-      console.log(movie);
-      let url = `https://api.themoviedb.org/3/movie/${movie.tmdb_Id}?api_key=3fd2be6f0c70a2a598f084ddfb75487c&language=en-US`;
-      console.log('JavaScript is running');
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data);
-          const movieCard = document.createElement('div');
+    function displayMovies() {
+      movieMain.innerHTML = '';
+      const start = (currentPage - 1) * moviesPerPage;
+      const end = start + moviesPerPage;
+      const currentMovies = movies.slice(start, end);
+      currentMovies.forEach((movie) => {
+        console.log(movie);
+        let url = `https://api.themoviedb.org/3/movie/${movie.tmdb_Id}?api_key=3fd2be6f0c70a2a598f084ddfb75487c&language=en-US`;
+        console.log('JavaScript is running');
+        fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+              console.log(data);
+            const movieCard = document.createElement('div');
 
-          if (movie.poster != null) {
-            poster = movie.poster;
-          } else if (data.poster_path == null) {
-            poster = 'https://bookstore.ams.org/images/not_found.png';
-          } else {
-            poster = IMG_PATH + data.poster_path;
-            vote = data.vote_average;
-          }
-          console.log(poster);
-          movieCard.classList.add('col');
-          movieCard.innerHTML = `
-                    <div class="card" style="width: 18rem;">
-                        <a href="/findbyid?id=${movie.movie_Id}">
-                          <div id="movieCard">
-                            <img src="${poster}" class="card-img-top" alt="alt" />
+            if (movie.poster != null) {
+              poster = movie.poster;
+            } else if (data.poster_path == null) {
+              poster = 'https://bookstore.ams.org/images/not_found.png';
+            } else {
+              poster = IMG_PATH + data.poster_path;
+              vote = data.vote_average;
+            }
+            console.log(poster);
+            movieCard.classList.add('col');
+            movieCard.innerHTML = `
+                      <div class="card" style="width: 18rem;">
+                          <a href="/findbyid?id=${movie.movieId}">
+                            <div id="movieCard">
+                              <img src="${poster}" class="card-img-top" alt="alt" />
+                            </div>
+                          </a>
+                          <div class="card-body">
+                              <h5 class="card-title" th:text="${movie.title}"></h5>
+                              <a href="/findbyid?id=${movie.movieId}" class="btn mr-2"><i class="fas fa-link"></i>More Detail</a>
+                              <a href="#" class="mr-2" id="vote"><i class="fab fa-github">${vote}</i></a>
                           </div>
-                        </a>
-                        <div class="card-body">
-                            <h5 class="card-title" th:text="${movie.title}"></h5>
-                            <a href="/findbyid?id=${movie.movie_Id}" class="btn mr-2"><i class="fas fa-link"></i>More Detail</a>
-                            <a href="#" class="mr-2" id="vote"><i class="fab fa-github">${vote}</i></a>
-                        </div>
-                    </div>`;
-          movieMain.appendChild(movieCard);
+                      </div>`;
+            movieMain.appendChild(movieCard);
+          });
+      });
+    }
+
+    function setupPagination() {
+      const pageCount = Math.ceil(movies.length / moviesPerPage);
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = '';
+      for (let i = 1; i <= pageCount; i++) {
+        const li = document.createElement('li');
+        li.classList.add('page-item');
+        const link = document.createElement('a');
+        link.classList.add('page-link');
+        link.href = '#';
+        link.innerText = i;
+        if (i === currentPage) {
+          li.classList.add('active');
+        }
+        link.addEventListener('click', () => {
+          currentPage = i;
+          displayMovies();
+          const current = document.getElementsByClassName('active');
+          current[0].classList.remove('active');
+          li.classList.add('active');
         });
-    });
+        li.appendChild(link);
+        pagination.appendChild(li);
+      }
+    }
+
+    displayMovies();
+    setupPagination();
   });
 </script>
-
-
-
-
 
 
 </body>

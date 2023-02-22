@@ -3,7 +3,9 @@ package com.capstone.movieApp.Controller;
 
 import com.capstone.movieApp.Model.Admin;
 import com.capstone.movieApp.Model.User;
+import com.capstone.movieApp.Repository.AdminRepository;
 import com.capstone.movieApp.Service.AdminLoginService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,10 +20,13 @@ public class AdminLoginController {
     @Autowired(required = true)
     private AdminLoginService adminService;
 
+    @Autowired
+    private AdminRepository adminRepo;
+
     private Admin adminData;
 
-
-    //go to login page
+    //go to admin login page
+    //button in registrationSuccess file that redirect admin to the login page
     @GetMapping("/admin")
     public String loginPage(Model model) {
         Admin admin = new Admin();
@@ -29,13 +34,20 @@ public class AdminLoginController {
         return "adminLogin";
     }
 
+    //method invoked upon login form submission
+    //if returned value by validateAdmin is "dashboard", set session
     @PostMapping("/adminLogin")
-    public String validateLogin(@ModelAttribute("admin") Admin admin) {
-        adminData = admin;
-        return adminService.validateAdmin(admin);
+    public String validateLogin(@ModelAttribute("admin") Admin admin, HttpServletRequest request) {
+        String result = adminService.validateAdmin(admin, request);
+        if (result.equals("dashboard")) {
+            Admin admindata = adminRepo.findByUsername(admin.getUsername()).get();
+            request.getSession().setAttribute("username", admindata.getUsername());
+        }
+        return result;
+
     }
 
-    //go to register page
+    //go to admin register page
     @GetMapping("/registerAdmin")
     public String registerPage(Model model) {
         Admin admin = new Admin();
@@ -43,6 +55,8 @@ public class AdminLoginController {
         return "adminRegister";
     }
 
+    //if registerAdmin in service class return true, then return registrationSuccess
+    //if registerAdmin in service class return false, then return registrationError
     @PostMapping("/AdminRegistration")
     public String registerAdmin(@ModelAttribute("admin") Admin admin) {
         if (adminService.registerAdmin(admin)) {
@@ -51,8 +65,6 @@ public class AdminLoginController {
             return "registrationError";
         }
     }
-
-
-
-
 }
+
+

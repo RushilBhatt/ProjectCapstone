@@ -1,35 +1,24 @@
-/*
 package com.capstone.movieApp.Model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
-@Table(name = "favorites")
+@Table (name = "Favourite")
 public class Favourite {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue
+    private int id;
+    private int movieId;
 
-    @ManyToOne
-    @JoinColumn(name="movieid")
-    private Movie movie;
-
-    @ManyToOne
-    @JoinColumn(name = "userid")
-    private User user;
-
-    public Favourite (Movie movie,User user) {
-        this.movie = movie;
-        this.user = user;
-    }
-
-
-
+    private int userId;
 }
-*/
